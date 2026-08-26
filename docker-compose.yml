@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db-pedidos:
+    image: postgres:15-alpine
+    container_name: db-pedidos
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${PORT_DB_PEDIDOS}:5432"
+    volumes:
+      - vol_db_pedidos:/var/lib/postgresql/data
+    networks:
+      - red-logistica
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  red-logistica:
+    name: red-logistica
+    external: true
+
+volumes:
+  vol_db_pedidos:
