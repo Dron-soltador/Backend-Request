@@ -21,6 +21,21 @@ services:
       timeout: 5s
       retries: 5
 
+  api-pedidos:
+    build: .
+    container_name: api-pedidos
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-pedidos:5432/${POSTGRES_DB}
+      - JWT_SECRET=clave_secreta_super_segura
+    depends_on:
+      db-pedidos:
+        condition: service_healthy
+    networks:
+      - red-logistica
+
 networks:
   red-logistica:
     name: red-logistica
