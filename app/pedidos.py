@@ -118,3 +118,98 @@ def crear_pedido():
             "code": 500,
             "message": f"Error interno al guardar el pedido: {str(e)}"
         }), 500
+
+# Conjunto de estados permitidos según la especificación de la issue
+ESTADOS_VALIDOS = {'PENDIENTE', 'EN_CAMINO', 'ENTREGADO', 'RECHAZADO'}
+
+@pedidos_bp.route('/usuario/<int:usuario_id>', methods=['GET'])
+def obtener_pedidos_usuario(usuario_id):
+    """
+    Obtener el historial de pedidos de un usuario
+    ---
+    tags:
+      - Pedidos
+    parameters:
+      - in: path
+        name: usuario_id
+        type: integer
+        required: true
+        description: ID del usuario para filtrar su historial
+    responses:
+      200:
+        description: Lista de pedidos del usuario
+    """
+    # Consulta a PostgreSQL filtrando únicamente los paquetes de este usuario
+    pedidos = Pedido.query.filter_by(usuario_id=usuario_id).order_by(Pedido.fecha_creacion.desc()).all()
+    
+    # Convertimos la lista de objetos SQLAlchemy a un arreglo de diccionarios JSON
+    return jsonify([pedido.to_dict() for pedido in pedidos]), 200
+
+
+@pedidos_bp.route('/<int:pedido_id>/estado', methods=['PUT'])
+def actualizar_estado_pedido(pedido_id):
+    """
+    Actualizar el estado operativo de una orden
+    ---
+    tags:
+      - Pedidos
+    parameters:
+      - in: path
+        name: pedido_id
+        type: integer
+        required: true
+        description: ID del pedido a modificar
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - estado
+          properties:
+            estado:
+              type: string
+              enum: [PENDIENTE, EN_CAMINO, ENTREGADO, RECHAZADO]
+              example: EN_CAMINO
+    responses:
+      200:
+        description: Estado actualizado correctamente
+      400:
+        description: El estado proporcionado no es válido
+      404:
+        description: No se encontró el pedido
+    """
+    data = request.get_json() or {}
+    nuevo_estado = data.get('estado')
+
+    # Validar que el estado enviado no sea nulo y pertenezca al catálogo permitido
+    if not nuevo_estado or nuevo_estado not in ESTADOS_VALIDOS:
+        return jsonify({
+            "code": 400,
+            "message": f"Estado inválido. Valores permitidos: {', '.join(sorted(ESTADOS_VALIDOS))}"
+        }), 400
+
+    # Buscar el pedido por su ID
+    pedido = Pedido.query.get(pedido_id)
+    if not pedido:
+        return jsonify({
+            "code": 404,
+            "message": f"No se encontró ningún pedido con el ID {pedido_id}"
+        }), 404
+
+    try:
+        # Actualización del campo y persistencia en la base de datos
+        pedido.estado = nuevo_estado
+        db.session.commit()
+
+        return jsonify({
+            "message": "Estado del pedido actualizado exitosamente",
+            "pedido": pedido.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "code": 500,
+            "message": f"Error interno al actualizar el estado: {str(e)}"
+        }), 500
