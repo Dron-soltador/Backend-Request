@@ -102,6 +102,109 @@ Específico: Empaquetar cada microservicio, el frontend y las bases de datos en 
 Medible: Generar un archivo docker-compose.yml funcional que permita orquestar y levantar el 100% de la infraestructura con un único comando (docker-compose up) en un tiempo máximo de 3 minutos en la computadora de exposición.
 Alcanzable / Relevante: Facilita la portabilidad y evita el clásico problema de "en mi máquina sí funcionaba".
 
+## Integración con el administrador de drones
+
+La base de datos de Pedidos es la fuente principal. Cada pedido creado se guarda
+localmente y se notifica al despachador del administrador. El despachador
+procesa la asignación y devuelve el estado mediante un `PUT` a este servicio.
+
+### Matriz de tareas y rutas
+
+| Actor | Tarea | Método | Ruta |
+| --- | --- | --- | --- |
+| Usuario | Hacer un pedido | `POST` | `/api/v1/pedidos` |
+| Usuario | Consultar estado | `GET` | `/api/v1/pedidos/{id}/estado` |
+| Usuario | Historial de pedidos | `GET` | `/api/v1/pedidos/usuario/{usuario_id}` |
+| Administrador | Consultar pedidos | `GET` | `/api/v1/pedidos/para-despachador` |
+| Administrador | Recibir datos de interés | `GET` | `/api/v1/pedidos/para-despachador/{id}` |
+| Administrador | Cambiar estado del pedido | `PUT` | `/api/v1/pedidos/{id}/estado` |
+
+### Notificación de un pedido nuevo
+
+Después de guardar un pedido, este servicio llama automáticamente a:
+
+```text
+POST http://192.168.220.131:5002/despachar
+```
+
+con el siguiente cuerpo:
+
+```json
+{
+  "pedido_id": 1
+}
+```
+
+Si la notificación falla, el pedido permanece guardado y puede reintentarse
+con la ruta interna:
+
+```text
+POST /api/v1/pedidos/{id}/notificar-despacho
+```
+
+### Rutas utilizadas por el administrador
+
+Estas rutas se omiten de Swagger porque son de integración entre repositorios:
+
+```text
+GET /api/v1/pedidos/para-despachador
+GET /api/v1/pedidos/para-despachador/{id}
+PUT /api/v1/pedidos/{id}/estado
+POST /api/v1/pedidos/{id}/notificar-despacho
+```
+
+El listado para el administrador devuelve solamente los datos necesarios para
+despachar:
+
+```json
+[
+  {
+    "id": 1,
+    "peso_kg": 2.2,
+    "es_urgente": true,
+    "fecha_creacion": "2026-09-30T12:00:00Z",
+    "es_fragil": false,
+    "origen": {
+      "latitud": -34.6037,
+      "longitud": -58.3816
+    },
+    "destino": {
+      "latitud": -34.7205,
+      "longitud": -58.2541
+    }
+  }
+]
+```
+
+No se publican categoría, costo, cliente, dirección ni datos del usuario.
+
+El usuario consulta el estado almacenado en Pedidos mediante:
+
+```text
+GET /api/v1/pedidos/{id}/estado
+```
+
+El administrador actualiza ese mismo estado mediante:
+
+```text
+PUT /api/v1/pedidos/{id}/estado
+```
+
+```json
+{
+  "estado": "EN_CAMINO"
+}
+```
+
+La URL del despachador se configura con:
+
+```text
+DESPACHADOR_SERVICE_URL=http://192.168.220.131:5002
+```
+
+No se debe usar `/apidocs/` para transferir datos: esa ruta solo muestra la
+interfaz Swagger.
+
 
 
 

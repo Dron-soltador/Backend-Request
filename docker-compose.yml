@@ -28,8 +28,12 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-pedidos:5432/${POSTGRES_DB}
+      - PORT=3001
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-pedidos:5432/${POSTGRES_DB}
       - JWT_SECRET=clave_secreta_super_segura
+      - DESPACHADOR_SERVICE_URL=${DESPACHADOR_SERVICE_URL:-http://192.168.220.131:5002}
+      - REMOTE_API_TIMEOUT=${REMOTE_API_TIMEOUT:-5}
+      - REMOTE_API_TOKEN=${REMOTE_API_TOKEN:-}
     depends_on:
       db-pedidos:
         condition: service_healthy
