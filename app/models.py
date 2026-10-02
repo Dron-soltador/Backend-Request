@@ -15,16 +15,18 @@ class Pedido(db.Model):
     __tablename__ = 'pedidos'
 
     id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
     lat_origen = db.Column(db.Float, nullable=False)
     lon_origen = db.Column(db.Float, nullable=False)
     lat_destino = db.Column(db.Float, nullable=False)
     lon_destino = db.Column(db.Float, nullable=False)
     peso_kg = db.Column(db.Float, nullable=False)
+    cliente = db.Column(db.String(100), nullable=True)
+    direccion = db.Column(db.String(200), nullable=True)
     categoria = db.Column(db.String(50), nullable=True, default='Estándar')
     es_fragil = db.Column(db.Boolean, default=False)
     es_urgente = db.Column(db.Boolean, default=False)
-    costo_total = db.Column(db.Float, nullable=False)
+    costo_total = db.Column(db.Float, nullable=True)
     fecha_programada = db.Column(db.String(50), nullable=True)
     estado = db.Column(db.String(20), nullable=False, default='PENDIENTE')
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
@@ -33,6 +35,8 @@ class Pedido(db.Model):
         return {
             "id": self.id,
             "usuario_id": self.usuario_id,
+            "cliente": self.cliente,
+            "direccion": self.direccion,
             "lat_origen": self.lat_origen,
             "lon_origen": self.lon_origen,
             "lat_destino": self.lat_destino,
