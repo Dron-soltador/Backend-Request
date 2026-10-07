@@ -11,6 +11,15 @@ class Usuario(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     rol = db.Column(db.String(20), nullable=False, default='cliente')
 
+    def to_dict(self):
+        # password_hash queda fuera a proposito: es el hash de Argon2 y nunca
+        # debe viajar en una respuesta de la API.
+        return {
+            "id": self.id,
+            "email": self.email,
+            "rol": self.rol
+        }
+
 class Pedido(db.Model):
     __tablename__ = 'pedidos'
 
