@@ -1,3 +1,10 @@
+<!-- calidad:inicio -->
+![Calidad](https://img.shields.io/badge/Calidad-15%2F100-red) ![Cumple](https://img.shields.io/badge/Cumple-10%2F15-yellow) ![Aprobado](https://img.shields.io/badge/Aprobado-NO-red)
+
+**Calidad de servicios (heurístico):** índice **15/100** · cumple **10/15** · aprobado **NO** · capas **1**
+`SEC 0 · SQL 0 · DBG 0 · duplicación 15.3% · endpoints 12 · tests 3`
+<!-- calidad:fin -->
+
 Proyecto
 
 El sistema de Control de Entregas por Drones es una plataforma de logística urbana donde tres microservicios independientes gestionan el ciclo completo de envío automatizado de paquetes: el Servicio de Pedidos registra las solicitudes, destinos y el peso de cada paquete; el Servicio de Drones administra la flota controlando el estado, porcentaje de batería y la capacidad de carga útil de cada unidad; y el Servicio Despachador actúa como orquestador inteligente evaluando qué dron disponible cumple con los requisitos para asignar el viaje. Todo esto se visualiza en un frontend interactivo en forma de panel de control que permite simular la creación de envíos, la asignación en tiempo real y la liberación del dron tras la entrega, representando un proyecto web con microservicios accesible, visualmente atractivo y fácil de defender ante los profesores en un plazo de 3 a 4 meses.
