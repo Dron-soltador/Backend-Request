@@ -3,6 +3,7 @@ from datetime import timezone
 
 from flask import Blueprint, request, jsonify
 
+from app.cotizador import calcular_cotizacion
 from app.integracion import (
     IntegracionRemotaError,
     notificar_pedido_al_despachador,
@@ -123,6 +124,119 @@ def listar_pedidos():
     """
     pedidos = Pedido.query.order_by(Pedido.fecha_creacion.desc()).all()
     return jsonify([pedido.to_dict() for pedido in pedidos]), 200
+
+
+# 1.b POST /api/v1/pedidos/cotizar -> Cotización sin persistir el pedido
+@pedidos_bp.route('/cotizar', methods=['POST'])
+def cotizar_pedido():
+    """Calcula la tarifa de un envío sin registrarlo en la base de datos.
+
+    Permite al cliente ver el costo mientras ajusta peso, categoría, urgencia o
+    puntos en el mapa. Reutiliza `calcular_cotizacion` para que la regla de
+    negocio tenga una sola implementación.
+
+    ---
+    tags:
+      - Pedidos
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - peso_kg
+          properties:
+            peso_kg:
+              type: number
+              example: 2.2
+            es_fragil:
+              type: boolean
+              example: true
+            es_urgente:
+              type: boolean
+              example: false
+            origen:
+              type: object
+              required:
+                - latitud
+                - longitud
+              properties:
+                latitud:
+                  type: number
+                  example: -34.6037
+                longitud:
+                  type: number
+                  example: -58.3816
+            destino:
+              type: object
+              required:
+                - latitud
+                - longitud
+              properties:
+                latitud:
+                  type: number
+                  example: -34.7205
+                longitud:
+                  type: number
+                  example: -58.2541
+    responses:
+      200:
+        description: Cotización calculada
+      400:
+        description: Faltan datos o las coordenadas no son válidas
+    """
+    data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict):
+        return jsonify({
+            "code": 400,
+            "message": "El cuerpo de la petición debe ser un objeto JSON"
+        }), 400
+
+    try:
+        peso_kg = data.get('peso_kg')
+        if peso_kg is None or peso_kg == '':
+            return jsonify({
+                "code": 400,
+                "message": "El campo obligatorio 'peso_kg' debe ser provisto"
+            }), 400
+
+        peso_kg = float(peso_kg)
+        if not math.isfinite(peso_kg) or peso_kg <= 0:
+            raise ValueError('peso_kg debe ser un número mayor que cero')
+
+        # Sin coordenadas no hay distancia, así que no hay cotización posible.
+        lat_origen, lon_origen, lat_destino, lon_destino = _coordenadas_pedido(data)
+        lat_origen, lon_origen = _validar_coordenadas(
+            lat_origen, lon_origen, 'origen'
+        )
+        lat_destino, lon_destino = _validar_coordenadas(
+            lat_destino, lon_destino, 'destino'
+        )
+
+        cotizacion = calcular_cotizacion(
+            lat_origen, lon_origen,
+            lat_destino, lon_destino,
+            peso_kg,
+            es_fragil=_to_bool(data.get('es_fragil', False)),
+            es_urgente=_to_bool(data.get('es_urgente', False)),
+        )
+
+        return jsonify({
+            "message": "Cotización calculada exitosamente",
+            "cotizacion": cotizacion
+        }), 200
+
+    except (TypeError, ValueError) as error:
+        return jsonify({
+            "code": 400,
+            "message": f"Error de formato en los datos enviados: {str(error)}"
+        }), 400
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"Error interno al cotizar el envío: {str(e)}"
+        }), 500
 
 
 # 2. POST /api/v1/pedidos -> Registrar un nuevo pedido
