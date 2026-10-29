@@ -3,7 +3,7 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-10-28.
+> Generado: 2026-10-29.
 
 ## 1. Veredicto
 
@@ -36,7 +36,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| MerceMaron | 7 | 32% | 30 d | 50% | **28** | No aprueba | Cumplimiento 32% (mín. 50%); Pausa 30 d (máx. 10 d) |
+| MerceMaron | 7 | 32% | 30 d | 43% | **27** | No aprueba | Cumplimiento 32% (mín. 50%); Pausa 30 d (máx. 10 d); Recencia 43% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -146,7 +146,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de líneas de código ejecutadas por la suite de tests (cobertura real, no cantidad de archivos de test).
 - **Por qué importa:** Un test que existe pero no ejecuta el código no protege de nada: la cobertura muestra qué partes quedan sin verificar.
-- **Tu resultado:** **35.8%** de líneas cubiertas _(mínimo 80% de líneas)_
+- **Tu resultado:** **35.8%** de líneas cubiertas · fuente: ejecución: pytest _(mínimo 80% de líneas)_
 - **Para investigar la causa:**
     - ¿Qué módulos o ramas del sistema nunca se ejecutan en los tests?
     - ¿Los tests prueban el camino principal y los errores, o solo el caso feliz?
@@ -169,7 +169,7 @@ Criterios que hoy están en rojo y qué habría que cambiar para alcanzar el niv
 | Baja cohesión (Coh) | **1** unidad(es) con baja cohesión | máximo 0 | Separar en unidades con una sola responsabilidad; 0 clases con baja cohesión. |
 | Complejidad alta (Compl) | **10** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1416 LOC) | Extraer ramas y reglas a funciones con nombre propio; ≤5 bloques por 1000 LOC. |
 | Acoplamiento alto (Acop) | **3** unidad(es) con acoplamiento alto | máximo 2 por 1000 LOC | Reducir dependencias directas entre unidades; ≤2 por 1000 LOC. |
-| Cobertura de tests (Cob) | **35.8%** de líneas cubiertas | mínimo 80% de líneas | Publicar cobertura (o correr la suite con coverage) y cubrir ≥80% de líneas. |
+| Cobertura de tests (Cob) | **35.8%** de líneas cubiertas · fuente: ejecución: pytest | mínimo 80% de líneas | Publicar cobertura (o correr la suite con coverage) y cubrir ≥80% de líneas. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo.
 
