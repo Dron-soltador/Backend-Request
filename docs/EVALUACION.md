@@ -18,6 +18,7 @@
 | Tests (archivos) | 5 |
 | Cobertura de líneas | 42.7% (mínimo 80%) |
 | Capas detectadas | presentacion, logica, datos |
+| Pushes directos a `main` (sin PR) | 0 |
 | Tope por duplicación | `DUP>=30%` → índice ≤ 30 |
 
 > **Aprobado** exige las compuertas críticas (**SEC**, **SQL**, **capas**, **índice ≥ 50** y **cobertura ≥ 80 %** cuando aplica) y tolera hasta **3 criterios en rojo** (12/15). No es una nota: sirve para ordenar y priorizar la revisión.
