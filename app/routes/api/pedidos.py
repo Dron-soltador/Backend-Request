@@ -6,7 +6,15 @@ de capas reconocibles sin dependencias circulares complejas).
 """
 
 from flask import Blueprint, request, jsonify
+
 from app.models import db, Pedido
+from app.services.pedido_service import (
+    _pedido_para_despachador,
+    _to_int_or_none,
+    _to_bool,
+    _to_float_or_none,
+)
+from app.services.cotizador_service import calcular_cotizacion
 
 pedidos_bp = Blueprint('pedidos', __name__, url_prefix='/api/v1/pedidos')
 
@@ -21,9 +29,6 @@ def listar_pedidos():
 # 1.b POST /api/v1/pedidos/cotizar -> Cotización sin persistir el pedido
 @pedidos_bp.route('/cotizar', methods=['POST'])
 def cotizar_pedido():
-    from app.cotizador import calcular_cotizacion
-    import math
-
     data = request.get_json(silent=True) or {}
     if not isinstance(data, dict):
         return jsonify({
@@ -121,7 +126,7 @@ def crear_pedido_route():
 
     from datetime import datetime
     from app.models import Usuario
-    
+
     if not data.get('direccion') and data.get('dirección'):
         data['direccion'] = data['dirección']
 
@@ -138,24 +143,10 @@ def crear_pedido_route():
         if not math.isfinite(peso_kg) or peso_kg <= 0:
             raise ValueError('peso_kg debe ser un número mayor que cero')
 
-        def _validar_coordenadas_lat_long(latitud, longitud, nombre):
-            try:
-                lat = float(latitud) if latitud is not None else None
-                lon = float(longitud) if longitud is not None else None
-            except (TypeError, ValueError):
-                raise ValueError(f'{nombre} debe incluir latitud y longitud')
-            if lat is None or lon is None:
-                raise ValueError(f'{nombre} debe incluir latitud y longitud')
-            if not -90 <= lat <= 90:
-                raise ValueError(f'La latitud de {nombre} debe estar entre -90 y 90')
-            if not -180 <= lon <= 180:
-                raise ValueError(f'La longitud de {nombre} debe estar entre -180 y 180')
-            return lat, lon
-
-        lat_origen, lon_origen = _validar_coordenadas_lat_long(
+        lat_origen, lon_origen = _validar_coordenadas_legacy(
             data.get('lat_origen'), data.get('lon_origen'), 'origen'
         )
-        lat_destino, lon_destino = _validar_coordenadas_lat_long(
+        lat_destino, lon_destino = _validar_coordenadas_legacy(
             data.get('lat_destino'), data.get('lon_destino'), 'destino'
         )
 
@@ -189,8 +180,8 @@ def crear_pedido_route():
                 result_dict, err_code = notificacion
                 return jsonify({
                     "message": (
-                        "Pedido creado localmente, pero falló la notificación "
-                        "al despachador"
+                        "Pedido creado localmente, pero falló el "
+                        "notificación al despachador"
                     ),
                     "pedido": nuevo_pedido.to_dict(),
                     "notificacion": result_dict
@@ -223,27 +214,6 @@ def crear_pedido_route():
 @pedidos_bp.route('/para-despachador', methods=['GET'])
 def listar_pedidos_para_despachador_route():
     pedidos = Pedido.query.order_by(Pedido.fecha_creacion.asc()).all()
-    def _pedido_para_despachador(p):
-        from datetime import timezone
-        return {
-            'id': p.id,
-            'peso_kg': p.peso_kg,
-            'es_urgente': bool(p.es_urgente),
-            'fecha_creacion': (
-                f'{p.fecha_creacion.isoformat()}Z'
-                if p.fecha_creacion and timezone.getdefault_timezone()
-                else str(pedido.fecha_creacion) if p.fecha_creacion else None
-            ),
-            'es_fragil': bool(p.es_fragil),
-            'origen': {
-                'latitud': p.lat_origen,
-                'longitud': p.lon_origen,
-            },
-            'destino': {
-                'latitud': p.lat_destino,
-                'longitud': p.lon_destino,
-            },
-        }
     return jsonify([_pedido_para_despachador(p) for p in pedidos]), 200
 
 
@@ -256,26 +226,6 @@ def obtener_pedido_para_despachador_route(pedido_id):
             "error": "Not Found",
             "message": f"No se encontró el pedido con ID {pedido_id}."
         }), 404
-    def _pedido_para_despachador(p):
-        from datetime import timezone
-        return {
-            'id': p.id,
-            'peso_kg': p.peso_kg,
-            'es_urgente': bool(p.es_urgente),
-            'fecha_creacion': (
-                f'{p.fecha_creacion.isoformat()}Z'
-                if p.fecha_creacion else None
-            ),
-            'es_fragil': bool(p.es_fragil),
-            'origen': {
-                'latitud': p.lat_origen,
-                'longitud': p.lon_origen,
-            },
-            'destino': {
-                'latitud': p.lat_destino,
-                'longitud': p.lon_destino,
-            },
-        }
     return jsonify(_pedido_para_despachador(pedido)), 200
 
 
@@ -347,3 +297,20 @@ def actualizar_estado_pedido_route(pedido_id):
 def obtener_pedidos_usuario_route(usuario_id):
     pedidos = Pedido.query.filter_by(usuario_id=usuario_id).order_by(Pedido.fecha_creacion.desc()).all()
     return jsonify([pedido.to_dict() for p in pedidos]), 200
+
+
+# Helper legacy: validar coordenadas estilo antiguo (para compatibilidad hacia atrás)
+def _validar_coordenadas_legacy(latitud, longitud, nombre):
+    """Valida coordenadas usando el estilo original del archivo routes/api/pedidos.py."""
+    try:
+        lat = float(latitud) if latitud is not None else None
+        lon = float(longitud) if longitud is not None else None
+    except (TypeError, ValueError):
+        raise ValueError(f'{nombre} debe incluir latitud y longitud')
+    if lat is None or lon is None:
+        raise ValueError(f'{nombre} debe incluir latitud y longitud')
+    if not -90 <= lat <= 90:
+        raise ValueError(f'La latitud de {nombre} debe estar entre -90 y 90')
+    if not -180 <= lon <= 180:
+        raise ValueError(f'La longitud de {nombre} debe estar entre -180 y 180')
+    return lat, lon

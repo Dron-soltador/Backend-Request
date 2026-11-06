@@ -1,13 +1,35 @@
 """Vistas (controladores) de pedidos API v1.
 
 Define los endpoints HTTP /api/v1/pedidos para la gestión completa de pedidos.
+Usa la lógica de negocio de la capa de servicios para mantener las capas separadas.
 """
 
 import math
 from flask import Blueprint, request, jsonify
+
 from app.models import db, Pedido
+from app.services.pedido_service import (
+    _to_int_or_none,
+    _to_bool,
+    _coordenadas_pedido,
+    _validar_coordenadas,
+    _pedido_para_despachador,
+    crear_pedido,
+)
 
 pedidos_bp = Blueprint('pedidos', __name__, url_prefix='/api/v1/pedidos')
+
+
+# Notificación al despachador (parcheado en pruebas)
+# La prueba parchea este nombre: patch('app.pedidos.notificar_pedido_al_despachador', ...)
+def notificar_pedido_al_despachador(pedido_id):
+    """Enviar notificación al servicio de despachador.
+
+    Esta función es mantenida para compatibilidad con tests que la parchean.
+    La lógica real está en app.integracion.
+    """
+    from app.integracion import notificar_pedido_al_despachador as _notificar
+    return _notificar(pedido_id)
 
 
 # Helper: formatear fecha en formato ISO con sufijo Z
@@ -21,8 +43,8 @@ def _formatear_fecha_iso(fecha):
     return iso
 
 
-# Helper: proyección para despachador
-def _pedido_para_despachador(pedido):
+# Helper: proyección para despachador (uso local cuando no se usa el servicio)
+def _pedido_para_despachador_local(pedido):
     """Proyección pública para el gestor de drones.
 
     Expone únicamente los campos necesarios para asignar y despachar. No
@@ -40,20 +62,40 @@ def _pedido_para_despachador(pedido):
         },
         'destino': {
             'latitud': pedido.lat_destino,
-            'longitud': pedido.lon_destino,
+            'lon_destino': pedido.lon_destino,
         },
     }
 
 
 # Helper: validar coordenadas y devolver ValueError si inválidas
-def _validar_coordenadas(data, nombre):
+def _validar_coordenadas_data(data, nombre):
     """Valida que las coordenadas vengan informadas y estén en rangos válidos.
+
+    Soporta formatos planos: lat_origen/lon_origen
+    o anidado: origen: {latitud, longitud}
 
     Retorna (lat, lon) en caso exitoso.
     """
-    lat = data.get('lat_origen') if nombre == 'origen' else data.get('lat_destino')
-    lon = data.get('lon_origen') if nombre == 'origen' else data.get('lon_destino')
-
+    # Intentar formato anidado primero (origen: {latitud, longitud})
+    origen = data.get('origen')
+    destino = data.get('destino')
+    
+    if isinstance(origen, dict):
+        lat = origen.get('latitud')
+        lon = origen.get('longitud')
+    else:
+        lat = data.get('lat_origen')
+        lon = data.get('lon_origen')
+    
+    if lat is None or lon is None:
+        # Formato plano alternativo
+        if nombre == 'origen':
+            lat = data.get('lat_origen')
+            lon = data.get('lon_origen')
+        else:
+            lat = data.get('lat_destino')
+            lon = data.get('lon_destino')
+    
     if lat is None or lon is None:
         raise ValueError(f'{nombre} debe incluir latitud y longitud')
 
@@ -89,16 +131,6 @@ def _to_int_or_none(value):
 
 # 2. POST /api/v1/pedidos -> Registrar un nuevo pedido
 @pedidos_bp.route('', methods=['POST'])
-
-
-#: Función de notificación al despachador.
-#: Las pruebas parchean este nombre: patch('app.pedidos.notificar_pedido_al_despachador', ...)
-def notificar_pedido_al_despachador(pedido_id):
-    """Enviar notificación al servicio de despachador."""
-    # La prueba parchea app.pedidos.notificar_pedido_al_despachador
-    # y esta función debe ser reemplazada por el parche
-    from app.integracion import notificar_pedido_al_despachador as _notificar
-    return _notificar(pedido_id)
 def crear_pedido_route():
     data = request.get_json(silent=True) or {}
     if not isinstance(data, dict):
@@ -126,7 +158,7 @@ def crear_pedido_route():
 
         # Validar coordenadas de origen (lanzamos ValueError si faltan)
         try:
-            lat_origen, lon_origen = _validar_coordenadas(data, 'origen')
+            lat_origen, lon_origen = _validar_coordenadas_data(data, 'origen')
         except ValueError as e:
             return jsonify({
                 "code": 400,
@@ -135,7 +167,7 @@ def crear_pedido_route():
 
         # Validar coordenadas de destino
         try:
-            lat_destino, lon_destino = _validar_coordenadas(data, 'destino')
+            lat_destino, lon_destino = _validar_coordenadas_data(data, 'destino')
         except ValueError as e:
             return jsonify({
                 "code": 400,
@@ -197,7 +229,7 @@ def crear_pedido_route():
 @pedidos_bp.route('/para-despachador', methods=['GET'])
 def listar_pedidos_para_despachador_route():
     pedidos = Pedido.query.order_by(Pedido.fecha_creacion.asc()).all()
-    return jsonify([_pedido_para_despachador(p) for p in pedidos]), 200
+    return jsonify([_pedido_para_despachador_local(p) for p in pedidos]), 200
 
 
 # 4. GET /api/v1/pedidos/para-despachador/:id -> Un envío para despachar
@@ -209,7 +241,7 @@ def obtener_pedido_para_despachador_route(pedido_id):
             "error": "Not Found",
             "message": f"No se encontró el pedido con ID {pedido_id}."
         }), 404
-    return jsonify(_pedido_para_despachador(pedido)), 200
+    return jsonify(_pedido_para_despachador_local(pedido)), 200
 
 
 # 5. GET /api/v1/pedidos/:id -> Obtener detalle de un pedido
@@ -237,6 +269,7 @@ def consultar_estado_pedido_route(pedido_id):
         "pedido_id": pedido_id,
         "estado": pedido.estado
     }), 200
+
 
 # Notificación de un pedido existente (solo para testeo/desarrollo)
 @pedidos_bp.route('/<int:pedido_id>/notificar-despacho', methods=['POST'])
