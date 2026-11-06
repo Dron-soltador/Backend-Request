@@ -9,18 +9,21 @@ import math
 
 
 def _to_int_or_none(value):
+    """Convierte a entero o None. Valores vacíos retornan None."""
     if value is None or value == '':
         return None
     return int(value)
 
 
 def _to_float_or_none(value):
+    """Convierte a float o None. Valores vacíos retornan None."""
     if value is None or value == '':
         return None
     return float(value)
 
 
 def _to_bool(value):
+    """Convierte a bool, aceptando strings comunes."""
     if isinstance(value, bool):
         return value
     if isinstance(value, str):
@@ -29,6 +32,7 @@ def _to_bool(value):
 
 
 def _fecha_utc(fecha):
+    """Formatea una fecha datetime a string ISO con sufijo Z."""
     if not fecha:
         return None
     if fecha.tzinfo is None:
@@ -37,16 +41,24 @@ def _fecha_utc(fecha):
 
 
 def _coordenadas_punto(punto):
-    """Lee un punto desde un objeto {latitud, longitud}."""
+    """Lee un punto desde un objeto {latitud, longitud}.
+
+    Soporta claves: latitud/longitud, lat/lon, lng.
+    Retorna (lat, lon) o (None, None) si no es un dict.
+    """
     if not isinstance(punto, dict):
         return None, None
-    return (
-        punto.get('latitud', punto.get('lat')),
-        punto.get('longitud', punto.get('lon', punto.get('lng'))),
-    )
+    lat = punto.get('latitud', punto.get('lat'))
+    lon = punto.get('longitud', punto.get('lon', punto.get('lng')))
+    return lat, lon
 
 
 def _coordenadas_pedido(data):
+    """Extrae lat/lon de origen y destino de los datos del pedido.
+
+    Acepta formatos: {origen: {latitud, lon}, destino: {latitud, lon}}
+    o campos planos: lat_origen, lon_origen, lat_destino, lon_destino.
+    """
     origen = data.get('origen')
     destino = data.get('destino')
 
@@ -66,6 +78,11 @@ def _coordenadas_pedido(data):
 
 
 def _validar_coordenadas(latitud, longitud, nombre):
+    """Valida que coordenadas estén en rangos válidos.
+
+    Retorna (latitud, longitud) convertidas a float.
+    Lanza ValueError si faltan o están fuera de rango.
+    """
     latitud = _to_float_or_none(latitud)
     longitud = _to_float_or_none(longitud)
 
@@ -82,8 +99,8 @@ def _validar_coordenadas(latitud, longitud, nombre):
 def _pedido_para_despachador(pedido):
     """Proyección pública para el gestor de drones.
 
-    Expone únicamente los campos necesarios para asignar y despachar. No
-    incluye categoría, costo, cliente ni datos de usuario.
+    Expone únicamente los campos necesarios para asignar y despachar.
+    No incluye categoría, costo, cliente ni datos de usuario.
     """
     return {
         'id': pedido.id,
@@ -107,6 +124,9 @@ def crear_pedido(data, commit=True):
 
     Devuelve tupla (pedido, error_dict, status_code).
     Si error_dict es None, el pedido se guardó exitosamente.
+
+    Nota: Esta función está en extracción progresiva. La validación completa
+    y el manejo de usuario aún están en app.pedidos para mantener compatibilidad.
     """
     # Aceptamos también la grafía con acento que podría enviar un cliente
     # externo, pero la salida y el payload remoto usa "direccion".
@@ -129,6 +149,7 @@ def crear_pedido(data, commit=True):
                 "message": "peso_kg debe ser un número mayor que cero"
             }, 400
 
+        # Usar validación centralizada del servicio
         lat_origen, lon_origen, lat_destino, lon_destino = _coordenadas_pedido(data)
         lat_origen, lon_origen = _validar_coordenadas(
             lat_origen, lon_origen, 'origen'

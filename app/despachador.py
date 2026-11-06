@@ -6,7 +6,6 @@ from flask import Blueprint, request, jsonify
 despacho_bp = Blueprint('despacho', __name__, url_prefix='/despacho')
 
 # URLs de comunicación interna dentro de la red Docker ('red-logistica')
-import os
 
 PEDIDOS_SERVICE_URL = os.getenv('PEDIDOS_SERVICE_URL', 'http://api-pedidos:5000/api/v1/pedidos')
 DRONES_SERVICE_URL = os.getenv('DRONES_SERVICE_URL', 'http://192.168.220.131:5000')
@@ -14,7 +13,58 @@ DRONES_SERVICE_URL = os.getenv('DRONES_SERVICE_URL', 'http://192.168.220.131:500
 
 # Configuración de logs para cumplir con las evidencias requeridas
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Despachador")
+logger = logging.Logger("Despachador")
+
+
+def _actualizar_estado_dron(dron_id, estado_nuevo):
+    """Actualiza el estado de un dron mediante llamada HTTP al servicio de drones."""
+    url_dron = f"{DRONES_SERVICE_URL}/despachar"
+    logger.info(f"[HTTP OUT] Enviando PUT {url_dron} con estado '{estado_nuevo}'...")
+    
+    try:
+        resp_dron = requests.put(url_dron, json={"dron_id": dron_id, "estado": estado_nuevo}, timeout=5)
+        logger.info(f"[HTTP IN] Servicio Drones respondio con HTTP {resp_dron.status_code}")
+        
+        if resp_dron.status_code != 200:
+            raise Exception(f"Servicio Drones devolvio codigo {resp_dron.status_code}: {resp_dron.text}")
+        
+        return True
+    except Exception as e:
+        logger.error(f"[FALLA TRANSACCIONAL] No se pudo cambiar el estado del Dron #{dron_id}: {str(e)}")
+        return False
+
+
+def _actualizar_estado_pedido(pedido_id, estado_nuevo):
+    """Actualiza el estado de un pedido mediante llamada HTTP al servicio de pedidos."""
+    url_pedido = f"{PEDIDOS_SERVICE_URL}/{pedido_id}/estado"
+    logger.info(f"[HTTP OUT] Enviando PUT {url_pedido} con estado '{estado_nuevo}'...")
+    
+    try:
+        resp_pedido = requests.put(url_pedido, json={"estado": estado_nuevo}, timeout=5)
+        logger.info(f"[HTTP IN] Servicio Pedidos respondio con HTTP {resp_pedido.status_code}")
+        
+        if resp_pedido.status_code != 200:
+            raise Exception(f"Servicio Pedidos devolvio codigo {resp_pedido.status_code}: {resp_pedido.text}")
+        
+        return True
+    except Exception as e:
+        logger.error(f"[FALLA TRANSACCIONAL] No se pudo cambiar el estado del Pedido #{pedido_id}: {str(e)}")
+        return False
+
+
+def _revertir_estado_dron(dron_id):
+    """Revierte el estado del dron a DISPONIBLE en caso de fallo."""
+    url_dron = f"{DRONES_SERVICE_URL}/despachar"
+    logger.info(f"[REVERSION] Revertiendo Dron #{dron_id} a estado DISPONIBLE...")
+    
+    try:
+        requests.put(url_dron, json={"estado": "DISPONIBLE"}, timeout=5)
+        logger.info(f"[REVERSION OK] Dron #{dron_id} devuelto exitosamente a estado DISPONIBLE")
+        return True
+    except Exception as err_rollback:
+        logger.critical(f"[ERROR CRITICO REVERSION] No se pudo revertir el Dron #{dron_id}: {str(err_rollback)}")
+        return False
+
 
 @despacho_bp.route('/despachar', methods=['POST'])
 def despachar_envio():
@@ -60,45 +110,16 @@ def despachar_envio():
     logger.info(f"=== INICIANDO PROCESO DE DESPACHO (Pedido #{pedido_id} -> Dron #{dron_id}) ===")
 
     # PASO A: Actualizar estado del Dron a EN_MISION
-    url_dron = f"{DRONES_SERVICE_URL}/despachar"
-    logger.info(f"[HTTP OUT] Enviando PUT {url_dron} con estado 'EN_MISION'...")
-    
-    try:
-        resp_dron = requests.put(url_dron, json={"dron_id": dron_id, "estado": "EN_MISION"}, timeout=5)
-        logger.info(f"[HTTP IN] Servicio Drones respondio con HTTP {resp_dron.status_code}")
-        
-        if resp_dron.status_code != 200:
-            raise Exception(f"Servicio Drones devolvio codigo {resp_dron.status_code}: {resp_dron.text}")
-
-    except Exception as e:
-        logger.error(f"[FALLA TRANSACCIONAL] No se pudo cambiar el estado del Dron #{dron_id}: {str(e)}")
+    if not _actualizar_estado_dron(dron_id, "EN_MISION"):
         return jsonify({
             "code": 500,
-            "message": f"Falla en microservicio Drones. Operacion cancelada: {str(e)}"
+            "message": f"Falla en microservicio Drones. Operacion cancelada."
         }), 500
 
     # PASO B: Actualizar estado del Pedido a EN_CAMINO
-    url_pedido = f"{PEDIDOS_SERVICE_URL}/{pedido_id}/estado"
-    logger.info(f"[HTTP OUT] Enviando PUT {url_pedido} con estado 'EN_CAMINO'...")
-    
-    try:
-        resp_pedido = requests.put(url_pedido, json={"estado": "EN_CAMINO"}, timeout=5)
-        logger.info(f"[HTTP IN] Servicio Pedidos respondio con HTTP {resp_pedido.status_code}")
-
-        if resp_pedido.status_code != 200:
-            raise Exception(f"Servicio Pedidos devolvio codigo {resp_pedido.status_code}: {resp_pedido.text}")
-
-    except Exception as e:
-        logger.error(f"[FALLA TRANSACCIONAL] No se pudo cambiar el estado del Pedido #{pedido_id}: {str(e)}")
-        logger.warning(f"[REVERSION / ROLLBACK] Iniciando compensacion: Revertiendo Dron #{dron_id} a DISPONIBLE...")
-        
-        # OPERACIÓN DE COMPENSACIÓN (Revertir cambio en Drones)
-        try:
-            requests.put(url_dron, json={"estado": "DISPONIBLE"}, timeout=5)
-            logger.info(f"[REVERSION OK] Dron #{dron_id} devuelto exitosamente a estado DISPONIBLE")
-        except Exception as err_rollback:
-            logger.critical(f"[ERROR CRITICO REVERSION] No se pudo revertir el Dron #{dron_id}: {str(err_rollback)}")
-
+    if not _actualizar_estado_pedido(pedido_id, "EN_CAMINO"):
+        # Revertir el cambio en Drones
+        _revertir_estado_dron(dron_id)
         return jsonify({
             "code": 500,
             "message": "Falla al actualizar el pedido. Se ha revertido el estado del dron correctamente."
