@@ -3,22 +3,22 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-05.
+> Generado: 2026-11-06.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | backend |
-| Índice de calidad de servicios | **15/100** (mínimo 50) |
+| Índice de calidad de servicios | **30/100** (mínimo 50) |
 | Criterios cumplidos | **10/15** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,137 |
+| Código (LOC) | 1,142 |
 | Archivos de código | 13 |
 | Tests (archivos) | 5 |
-| Cobertura de líneas | 35.8% (mínimo 80%) |
+| Cobertura de líneas | 42.7% (mínimo 80%) |
 | Capas detectadas | presentacion, logica, datos |
-| Tope por duplicación | `DUP>=50%` → índice ≤ 15 |
+| Tope por duplicación | `DUP>=30%` → índice ≤ 30 |
 
 > **Aprobado** exige las compuertas críticas (**SEC**, **SQL**, **capas**, **índice ≥ 50** y **cobertura ≥ 80 %** cuando aplica) y tolera hasta **3 criterios en rojo** (12/15). No es una nota: sirve para ordenar y priorizar la revisión.
 
@@ -26,7 +26,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| MerceMaron | 10 | 1,733 | 0 | 219 | 7 | 100% |
+| MerceMaron | 11 | 1,765 | 0 | 219 | 8 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -36,7 +36,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| MerceMaron | 7 | 30% | 30 d | 0% | **20** | No aprueba | Cumplimiento 30% (mín. 50%); Recencia 0% (mín. 50%) |
+| MerceMaron | 8 | 35% | 30 d | 7% | **24** | No aprueba | Cumplimiento 35% (mín. 50%); Recencia 7% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -48,7 +48,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **15/100** _(mínimo 50)_
+- **Tu resultado:** índice **30/100** _(mínimo 50)_
 - **Para investigar la causa:**
     - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
     - ¿El índice bajó por muchas señales chicas o por una o dos graves?
@@ -58,7 +58,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **53.9%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **43.9%** de duplicación _(máximo 15%)_
 - **Para investigar la causa:**
     - ¿El trabajo se repartió por pantallas o archivos y se integró copiando y pegando bloques?
     - ¿Qué zonas del sistema cambiaron juntas más de una vez (señal de lógica compartida)?
@@ -116,7 +116,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **10** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1137 LOC))_
+- **Tu resultado:** **10** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1142 LOC))_
 - **Para investigar la causa:**
     - ¿Se agregaron condiciones a medida que aparecían casos nuevos?
     - ¿Se probaron todos los caminos o solo el caso principal?
@@ -142,7 +142,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de líneas de código ejecutadas por la suite de tests (cobertura real, no cantidad de archivos de test).
 - **Por qué importa:** Un test que existe pero no ejecuta el código no protege de nada: la cobertura muestra qué partes quedan sin verificar.
-- **Tu resultado:** **35.8%** de líneas cubiertas · fuente: ejecución: pytest _(mínimo 80% de líneas)_
+- **Tu resultado:** **42.7%** de líneas cubiertas · fuente: ejecución: pytest _(mínimo 80% de líneas)_
 - **Para investigar la causa:**
     - ¿Qué módulos o ramas del sistema nunca se ejecutan en los tests?
     - ¿Los tests prueban el camino principal y los errores, o solo el caso feliz?
@@ -160,11 +160,11 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 | Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
 |---|---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **15/100** | mínimo 50 | faltan 35 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
-| Duplicación (DRY) (duplicacion) | **53.9%** de duplicación | máximo 15% | sobran 38.9 pts | Ubicá los bloques repetidos con `jscpd` o SonarQube, llevá la lógica común a una función o módulo compartido y hacé que todos lo usen. Cada copia eliminada baja el porcentaje; meta ≤15%. |
-| Complejidad alta (Compl) | **10** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1137 LOC) | 10 hallazgo(s); el máximo para 1,137 LOC es 5.7 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
-| Funciones/métodos largos o con muchos parámetros (Tam) | **12** función/método(s) largos o con muchos parámetros | máximo 10 por 1000 LOC | 12 hallazgo(s); el máximo para 1,137 LOC es 11.4 | Partí las funciones/métodos largos en pasos con nombre y agrupá los parámetros que representan una misma idea en un objeto. Meta: ≤10 por 1000 LOC. |
-| Cobertura de tests (Cob) | **35.8%** de líneas cubiertas · fuente: ejecución: pytest | mínimo 80% de líneas | faltan 44.2 pts | Agregá o ampliá tests que ejecuten los módulos sin cubrir (camino principal y errores) y publicá el artefacto (`coverage/lcov.info`, `coverage-summary.json`, `coverage.xml` o `coverage.json`) o corré la suite con coverage. Meta: ≥80% de líneas. |
+| Índice de calidad de servicios (indice) | índice **30/100** | mínimo 50 | faltan 20 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
+| Duplicación (DRY) (duplicacion) | **43.9%** de duplicación | máximo 15% | sobran 28.9 pts | Ubicá los bloques repetidos con `jscpd` o SonarQube, llevá la lógica común a una función o módulo compartido y hacé que todos lo usen. Cada copia eliminada baja el porcentaje; meta ≤15%. |
+| Complejidad alta (Compl) | **10** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1142 LOC) | 10 hallazgo(s); el máximo para 1,142 LOC es 5.7 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
+| Funciones/métodos largos o con muchos parámetros (Tam) | **12** función/método(s) largos o con muchos parámetros | máximo 10 por 1000 LOC | 12 hallazgo(s); el máximo para 1,142 LOC es 11.4 | Partí las funciones/métodos largos en pasos con nombre y agrupá los parámetros que representan una misma idea en un objeto. Meta: ≤10 por 1000 LOC. |
+| Cobertura de tests (Cob) | **42.7%** de líneas cubiertas · fuente: ejecución: pytest | mínimo 80% de líneas | faltan 37.3 pts | Agregá o ampliá tests que ejecuten los módulos sin cubrir (camino principal y errores) y publicá el artefacto (`coverage/lcov.info`, `coverage-summary.json`, `coverage.xml` o `coverage.json`) o corré la suite con coverage. Meta: ≥80% de líneas. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
 
@@ -178,9 +178,8 @@ Archivos donde el análisis encontró cada señal en rojo (sin número de línea
 - `app/routes/api/pedidos.py`
 - `app/services/pedido_service.py`
 
-**Funciones/métodos largos o con muchos parámetros (Tam)** — 8 archivo(s):
+**Funciones/métodos largos o con muchos parámetros (Tam)** — 7 archivo(s):
 - `app/__init__.py`
-- `app/cotizador.py`
 - `app/despachador.py`
 - `app/integracion.py`
 - `app/pedidos.py`
