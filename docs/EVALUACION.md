@@ -37,7 +37,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| MerceMaron | 9 | 35% | 30 d | 64% | **32** | No aprueba | Cumplimiento 35% (mín. 50%) |
+| MerceMaron | 10 | 39% | 30 d | 100% | **39** | No aprueba | Cumplimiento 39% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -171,11 +171,11 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ## 6. Actividad en clase (miércoles y viernes)
 
-> Se consideran las **23 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **26 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### IkerSalinas
 
-**10/23 clases con actividad** · 15 commits · 13 merges
+**11/26 clases con actividad** · 17 commits · 15 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -202,10 +202,13 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-10-23 | **Sí** | Frontend-Gestionador | 1 / 1 |
 | 2026-10-28 | No | sin actividad | 0 / 0 |
 | 2026-10-30 | **Sí** | Backend-Gestionador, Frontend-Gestionador | 2 / 3 |
+| 2026-11-04 | No | sin actividad | 0 / 0 |
+| 2026-11-06 | No | sin actividad | 0 / 0 |
+| 2026-11-11 | **Sí** | Frontend-Gestionador | 2 / 2 |
 
 ### MerceMaron
 
-**8/23 clases con actividad** · 18 commits · 12 merges
+**10/26 clases con actividad** · 22 commits · 16 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -232,6 +235,9 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-10-23 | **Sí** | Frontend-Request | 1 / 0 |
 | 2026-10-28 | No | sin actividad | 0 / 0 |
 | 2026-10-30 | No | sin actividad | 0 / 0 |
+| 2026-11-04 | No | sin actividad | 0 / 0 |
+| 2026-11-06 | **Sí** | Backend-Request, Frontend-Request | 1 / 2 |
+| 2026-11-11 | **Sí** | Backend-Request, Frontend-Request | 3 / 2 |
 
 ## 7. Anexo: dónde mirar
 
