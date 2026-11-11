@@ -1,38 +1,10 @@
-"""Vistas y rutas de autenticación API.
+"""Módulo de compatibilidad para importaciones históricas de autenticación.
 
-Este módulo define el blueprint ``auth_bp`` que es registrado por
-``app/__init__.py``. La lógica de negocio ha sido extraída a
-``app.services.auth_service`` para mantener las capas separadas.
+Las rutas activas viven en :mod:`app.routes.api.auth`. Este módulo sólo
+reexporta el blueprint para no duplicar la implementación.
 """
 
-from flask import Blueprint, request, jsonify
-from app.services.auth_service import AuthService
-
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+from app.routes.api.auth import auth_bp
 
 
-@auth_bp.route('/register', methods=['POST'])
-def register():
-    """Registra un nuevo usuario."""
-    data = request.get_json() or {}
-    email = data.get('email')
-    password = data.get('password')
-    rol = data.get('rol', 'cliente')
-
-    result, error, status = AuthService.registrar(email, password, rol)
-    if error:
-        return jsonify(error), status
-    return jsonify(result), status
-
-
-@auth_bp.route('/login', methods=['POST'])
-def login():
-    """Inicia sesión de usuario."""
-    data = request.get_json() or {}
-    email = data.get('email')
-    password = data.get('password')
-
-    result, error, status = AuthService.iniciar_sesion(email, password)
-    if error:
-        return jsonify(error), status
-    return jsonify(result), status
+__all__ = ['auth_bp']
