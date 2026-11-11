@@ -77,3 +77,6 @@ docs/_build/
 *.a
 *.so
 *.dylib
+
+# Cobertura local de pytest
+.coverage
