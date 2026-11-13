@@ -122,13 +122,17 @@ class TestPedidosRoutes:
             )
             pedido_id = response.get_json()['pedido']['id']
         
-        # Now try to re-notify
-        response = client.post(
-            f'/api/v1/pedidos/{pedido_id}/notificar-despacho'
-        )
-        
+        # Now try to re-notify (mocked as well)
+        with patch(
+            'app.pedidos.notificar_pedido_al_despachador',
+            return_value={'exito': True},
+        ) as notificar2:
+            response = client.post(
+                f'/api/v1/pedidos/{pedido_id}/notificar-despacho'
+            )
+
         assert response.status_code == 200
-        notificar.assert_called_once_with(pedido_id)
+        notificar2.assert_called_once_with(pedido_id)
 
     def test_rechaza_pedido_sin_coordenadas(self, client):
         """Test that pedido is rejected without coordinates."""
