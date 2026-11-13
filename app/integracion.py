@@ -63,23 +63,19 @@ def _response_body(response: requests.Response) -> Any:
         return response.text.strip() or None
 
 
-def notificar_pedido_al_despachador(pedido_id: int) -> Dict[str, Any]:
-    """Notifica al despachador que existe un pedido nuevo.
-
-    El servicio remoto publica ``POST /despachar`` y recibe el cuerpo
-    ``{"pedido_id": <id>}``.
-    """
+def _url_despachador() -> str:
     base_url = (
         current_app.config.get("DESPACHADOR_SERVICE_URL")
         or DEFAULT_DESPACHADOR_SERVICE_URL
-    ).rstrip("/")
-    url = f"{base_url}/despachar"
-    payload = {"pedido_id": pedido_id}
+    )
+    return f"{base_url.rstrip('/')}/despachar"
 
+
+def _enviar_notificacion(url: str, pedido_id: int) -> requests.Response:
     try:
-        response = requests.post(
+        return requests.post(
             url,
-            json=payload,
+            json={"pedido_id": pedido_id},
             headers=_headers(pedido_id),
             timeout=_timeout(),
         )
@@ -90,6 +86,8 @@ def notificar_pedido_al_despachador(pedido_id: int) -> Dict[str, Any]:
             detalle=str(exc),
         ) from exc
 
+
+def _detalle_o_error(response: requests.Response, url: str) -> Any:
     detalle = _response_body(response)
     if not 200 <= response.status_code < 300:
         raise IntegracionRemotaError(
@@ -98,6 +96,18 @@ def notificar_pedido_al_despachador(pedido_id: int) -> Dict[str, Any]:
             url=url,
             detalle=detalle,
         )
+    return detalle
+
+
+def notificar_pedido_al_despachador(pedido_id: int) -> Dict[str, Any]:
+    """Notifica al despachador que existe un pedido nuevo.
+
+    El servicio remoto publica ``POST /despachar`` y recibe el cuerpo
+    ``{"pedido_id": <id>}``.
+    """
+    url = _url_despachador()
+    response = _enviar_notificacion(url, pedido_id)
+    detalle = _detalle_o_error(response, url)
 
     return {
         "exito": True,

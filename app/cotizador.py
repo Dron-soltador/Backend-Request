@@ -1,16 +1,13 @@
-"""Módulo de cálculo de cotizaciones y distancias.
+"""Módulo de compatibilidad para el cálculo de cotizaciones.
 
-Proporciona funciones reutilizables para calcular distancias Haversine
-y cotizaciones de envío. La lógica principal está en
-``app.services.cotizador_service`` para mantener una capa de datos
-organizada y reducir la duplicación.
+La implementación vive en :mod:`app.services.cotizador_service`; este módulo
+sólo reexporta las funciones para importaciones históricas.
 """
 
 from app.services.cotizador_service import (
-    calcular_distancia_haversine,
     calcular_cotizacion,
+    calcular_distancia_haversine,
 )
 
 
-# Alias para compatibilidad con importaciones existentes
 __all__ = ['calcular_distancia_haversine', 'calcular_cotizacion']

@@ -1,3 +1,4 @@
+"""Tests for pedidos despachador using pytest."""
 import math
 import unittest
 from datetime import datetime
@@ -192,7 +193,3 @@ class TestPedidosParaDespachador(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()['pedido']['estado'], 'EN_CAMINO')
-
-
-if __name__ == '__main__':
-    unittest.main()
