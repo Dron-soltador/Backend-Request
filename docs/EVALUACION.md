@@ -3,23 +3,22 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-13.
+> Generado: 2026-11-14.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | backend |
-| Índice de calidad de servicios | **30/100** (mínimo 50) |
-| Criterios cumplidos | **10/15** |
+| Índice de calidad de servicios | **100/100** (mínimo 50) |
+| Criterios cumplidos | **14/15** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,142 |
+| Código (LOC) | 852 |
 | Archivos de código | 13 |
-| Tests (archivos) | 5 |
+| Tests (archivos) | 14 |
 | Cobertura de líneas | 42.7% (mínimo 80%) |
 | Capas detectadas | presentacion, logica, datos |
 | Pushes directos a `main` (sin PR) | 0 |
-| Tope por duplicación | `DUP>=30%` → índice ≤ 30 |
 
 > **Aprobado** exige las compuertas críticas (**SEC**, **SQL**, **capas**, **índice ≥ 50** y **cobertura ≥ 80 %** cuando aplica) y tolera hasta **3 criterios en rojo** (12/15). No es una nota: sirve para ordenar y priorizar la revisión.
 
@@ -27,7 +26,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| MerceMaron | 11 | 1,765 | 0 | 219 | 8 | 100% |
+| MerceMaron | 14 | 3,134 | 0 | 219 | 10 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -37,7 +36,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| MerceMaron | 10 | 38% | 30 d | 86% | **37** | No aprueba | Cumplimiento 38% (mín. 50%) |
+| MerceMaron | 11 | 42% | 30 d | 100% | **41** | No aprueba | Cumplimiento 42% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -45,25 +44,17 @@
 
 Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuando el resultado está en rojo, se agregan preguntas para **investigar la causa** (no hay recetas: entender el porqué es parte de la evaluación).
 
-### 1. Índice de calidad de servicios (indice) — A REVISAR
+### 1. Índice de calidad de servicios (indice) — OK
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **30/100** _(mínimo 50)_
-- **Para investigar la causa:**
-    - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
-    - ¿El índice bajó por muchas señales chicas o por una o dos graves?
-    - ¿Se revisó el código integrado después de unir el trabajo de cada integrante?
+- **Tu resultado:** índice **100/100** _(mínimo 50)_
 
-### 2. Duplicación (DRY) (duplicacion) — A REVISAR
+### 2. Duplicación (DRY) (duplicacion) — OK
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **43.9%** de duplicación _(máximo 15%)_
-- **Para investigar la causa:**
-    - ¿El trabajo se repartió por pantallas o archivos y se integró copiando y pegando bloques?
-    - ¿Qué zonas del sistema cambiaron juntas más de una vez (señal de lógica compartida)?
-    - ¿Hubo un lugar común acordado para la lógica repetida antes de empezar, o cada integrante resolvió lo suyo?
+- **Tu resultado:** **0.0%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -113,25 +104,17 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Una unidad que cambia por motivos distintos es frágil y cuesta entenderla.
 - **Tu resultado:** **0** unidad(es) con baja cohesión _(máximo 0)_
 
-### 11. Complejidad alta (Compl) — A REVISAR
+### 11. Complejidad alta (Compl) — OK
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **10** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1142 LOC))_
-- **Para investigar la causa:**
-    - ¿Se agregaron condiciones a medida que aparecían casos nuevos?
-    - ¿Se probaron todos los caminos o solo el caso principal?
-    - ¿Hay reglas de negocio mezcladas con detalles técnicos?
+- **Tu resultado:** **0** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 852 LOC))_
 
-### 12. Funciones/métodos largos o con muchos parámetros (Tam) — A REVISAR
+### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
 - **Qué mide:** Tamaño de las funciones/métodos y cantidad de parámetros.
 - **Por qué importa:** Una función que hace varias cosas cuesta leerla, nombrarla y reutilizarla.
-- **Tu resultado:** **12** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
-- **Para investigar la causa:**
-    - ¿La función creció por acumulación de pasos?
-    - ¿Agrupa operaciones que podrían describirse por separado?
-    - ¿Los parámetros representan una misma idea (un objeto) o cosas sueltas?
+- **Tu resultado:** **1** función/método(s) largos o con muchos parámetros _(máximo 10 por 1000 LOC)_
 
 ### 13. Acoplamiento alto (Acop) — OK
 
@@ -153,7 +136,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Cantidad de endpoints (rutas HTTP) expuestos por el backend.
 - **Por qué importa:** El backend se mide por lo que expone: pocos endpoints sugiere poca funcionalidad de servicio.
-- **Tu resultado:** **22** endpoint(s) _(mínimo 5)_
+- **Tu resultado:** **12** endpoint(s) _(mínimo 5)_
 
 ## 5. Observaciones y qué falta
 
@@ -161,10 +144,6 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 | Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
 |---|---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **30/100** | mínimo 50 | faltan 20 pts | El índice sólo penaliza lo que **excede** los umbrales de cada criterio: si tenés todo en verde, el índice es 100. Si está en rojo, mirá la columna **Brecha** y los criterios en rojo; corregí primero duplicación, SEC, SQL y capas. Meta del perfil exigente: ≥50. |
-| Duplicación (DRY) (duplicacion) | **43.9%** de duplicación | máximo 15% | sobran 28.9 pts | Ubicá los bloques repetidos con `jscpd` o SonarQube, llevá la lógica común a una función o módulo compartido y hacé que todos lo usen. Cada copia eliminada baja el porcentaje; meta ≤15%. |
-| Complejidad alta (Compl) | **10** bloque(s) de complejidad alta | máximo 5 por 1000 LOC (tenés 1142 LOC) | 10 hallazgo(s); el máximo para 1,142 LOC es 5.7 | Extraé condiciones y ramas a funciones con nombre propio, usá retornos tempranos y evitá anidar `if`/`switch`. Meta: ≤5 bloques por 1000 LOC. |
-| Funciones/métodos largos o con muchos parámetros (Tam) | **12** función/método(s) largos o con muchos parámetros | máximo 10 por 1000 LOC | 12 hallazgo(s); el máximo para 1,142 LOC es 11.4 | Partí las funciones/métodos largos en pasos con nombre y agrupá los parámetros que representan una misma idea en un objeto. Meta: ≤10 por 1000 LOC. |
 | Cobertura de tests (Cob) | **42.7%** de líneas cubiertas · fuente: ejecución: pytest | mínimo 80% de líneas | faltan 37.3 pts | Agregá o ampliá tests que ejecuten los módulos sin cubrir (camino principal y errores) y publicá el artefacto (`coverage/lcov.info`, `coverage-summary.json`, `coverage.xml` o `coverage.json`) o corré la suite con coverage. Meta: ≥80% de líneas. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
@@ -175,7 +154,7 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ### IkerSalinas
 
-**11/27 clases con actividad** · total del período: 17 commits · 15 merges
+**12/27 clases con actividad** · total del período: 18 commits · 16 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -204,14 +183,14 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-10-30 | **Sí** | Backend-Gestionador, Frontend-Gestionador | 2 / 3 |
 | 2026-11-04 | No | sin actividad | 0 / 0 |
 | 2026-11-06 | No | sin actividad | 0 / 0 |
-| 2026-11-11 | **Sí** | Frontend-Gestionador | 2 / 2 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
+| 2026-11-11 | **Sí** | Frontend-Gestionador | 2 / 1 |
+| 2026-11-13 | **Sí** | Backend-Gestionador, Frontend-Gestionador | 1 / 2 |
 
 **Fuera de clase:** sin actividad registrada.
 
 ### MerceMaron
 
-**10/27 clases con actividad** · total del período: 22 commits · 16 merges
+**11/27 clases con actividad** · total del período: 23 commits · 17 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -240,29 +219,14 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-10-30 | No | sin actividad | 0 / 0 |
 | 2026-11-04 | No | sin actividad | 0 / 0 |
 | 2026-11-06 | **Sí** | Backend-Request, Frontend-Request | 1 / 2 |
-| 2026-11-11 | **Sí** | Backend-Request, Frontend-Request | 3 / 2 |
-| 2026-11-13 | No | sin actividad | 0 / 0 |
+| 2026-11-11 | **Sí** | Backend-Request, Frontend-Request | 3 / 1 |
+| 2026-11-13 | **Sí** | Backend-Request | 1 / 2 |
 
 **Fuera de clase:** sin actividad registrada.
 
 ## 7. Anexo: dónde mirar
 
 Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
-
-**Complejidad alta (Compl)** — 4 archivo(s):
-- `app/despachador.py`
-- `app/pedidos.py`
-- `app/routes/api/pedidos.py`
-- `app/services/pedido_service.py`
-
-**Funciones/métodos largos o con muchos parámetros (Tam)** — 7 archivo(s):
-- `app/__init__.py`
-- `app/despachador.py`
-- `app/integracion.py`
-- `app/pedidos.py`
-- `app/routes/api/pedidos.py`
-- `app/services/cotizador_service.py`
-- `app/services/pedido_service.py`
 
 ---
 _Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo señalado y el criterio en `CRITERIOS-CALIDAD.md`._
