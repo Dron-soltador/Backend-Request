@@ -3,7 +3,7 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-19.
+> Generado: 2026-11-20.
 
 ## 1. Veredicto
 
@@ -38,7 +38,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| MerceMaron | 11 | 39% | 30 d | 57% | **34** | No aprueba | Cumplimiento 39% (mín. 50%) |
+| MerceMaron | 11 | 39% | 30 d | 50% | **32** | No aprueba | Cumplimiento 39% (mín. 50%) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -143,11 +143,11 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 
 ## 6. Actividad en clase y fuera de clase
 
-> Se consideran las **28 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **29 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### IkerSalinas
 
-**12/28 clases con actividad** · total del período: 18 commits · 16 merges
+**12/29 clases con actividad** · total del período: 18 commits · 16 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -179,6 +179,7 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 | 2026-11-11 | **Sí** | Frontend-Gestionador | 2 / 1 |
 | 2026-11-13 | **Sí** | Backend-Gestionador, Frontend-Gestionador | 1 / 2 |
 | 2026-11-18 | No | sin actividad | 0 / 0 |
+| 2026-11-20 | No | sin actividad | 0 / 0 |
 
 **Fuera de clase:** 1 fecha(s) con actividad · 1 commits · 1 merges
 
@@ -188,7 +189,7 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 
 ### MerceMaron
 
-**11/28 clases con actividad** · total del período: 23 commits · 17 merges
+**11/29 clases con actividad** · total del período: 23 commits · 17 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -220,6 +221,7 @@ _Cumple **todos** los criterios del semáforo: no hay nada que arreglar para apr
 | 2026-11-11 | **Sí** | Backend-Request, Frontend-Request | 3 / 1 |
 | 2026-11-13 | **Sí** | Backend-Request | 1 / 2 |
 | 2026-11-18 | No | sin actividad | 0 / 0 |
+| 2026-11-20 | No | sin actividad | 0 / 0 |
 
 **Fuera de clase:** sin actividad registrada.
 
